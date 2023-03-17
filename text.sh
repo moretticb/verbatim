@@ -40,15 +40,15 @@ if [ "$lastAction" = "" ]; then
 fi
 
 if [ "$action" == "Dictionary" ]; then
-	./text_dict.sh "$input" "$action"
+	./tools/text_dict.sh "$input" "$action"
 elif [ "$action" == "Synonym" ]; then
-	./text_synonym.sh "$input" "$action"
+	./tools/text_synonym.sh "$input" "$action"
 elif [ "$action" == "Excerpt" ]; then
-	./text_excerpt.sh "$input" "$action"
+	./tools/text_excerpt.sh "$input" "$action"
 elif [ "$action" == "Translation" ]; then
-	./text_translate.sh "$input" "$action"
+	./tools/text_translate.sh "$input" "$action"
 elif [ "$action" == "Speak" ]; then
-	./text_speak.sh "$input" "$action"
+	./tools/text_speak.sh "$input" "$action"
 elif [ "$action" == "ChatGPT" ]; then
-	./text_chatgpt.sh "$input" "$action"
+	./tools/text_chatgpt.sh "$input" "$action"
 fi
