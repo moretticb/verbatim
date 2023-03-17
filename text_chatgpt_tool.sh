@@ -2,7 +2,7 @@
 # from https://github.com/0xacx/chatGPT-shell-cli
 
 # get your key at https://platform.openai.com/account/api-keys
-OPENAI_KEY="$(cat $HOME/scripts/openai_key)"
+OPENAI_KEY="$(cat ./openai_key)"
 
 CHAT_INIT_PROMPT="You are ChatGPT, a Large Language Model trained by OpenAI. You will be answering questions from users. You answer as concisely as possible for each response (e.g. don’t be verbose). If you are generating a list, do not have too many items. Keep the number of items short. Before each user prompt you will be given the chat history in Q&A form. Output your answer directly, with no labels in front. Do not start your answers with A or Anwser. You were trained on data up until 2021. Today's date is $(date +%d/%m/%Y)"
 
