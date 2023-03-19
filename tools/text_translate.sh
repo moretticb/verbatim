@@ -1,7 +1,19 @@
 #!/bin/bash
 
-echo "Traduzir: $1"
-lang=$(echo -e "en\npt\nit\nnl\npt-en\nen-pt\npt-it\nit-pt\nit-en\nen-it\nnl-en\nen-nl" | choose -m)
+lang_menu="en"
+lang_menu="$lang_menu\npt"
+lang_menu="$lang_menu\nit"
+lang_menu="$lang_menu\nnl"
+lang_menu="$lang_menu\npt-en"
+lang_menu="$lang_menu\nen-pt"
+lang_menu="$lang_menu\npt-it"
+lang_menu="$lang_menu\nit-pt"
+lang_menu="$lang_menu\nit-en"
+lang_menu="$lang_menu\nen-it"
+lang_menu="$lang_menu\nnl-en"
+lang_menu="$lang_menu\nen-nl"
+
+lang=$(core/custom_menu.sh "$lang_menu" "$0" "$lastAction")
 
 if [ $? = 1 ]; then
 	exit 1;
