@@ -1,7 +1,18 @@
 #!/bin/bash
 
-input="$1"
-lastAction="$2"
+tool_name="Speak"
+
+# Handling parameters
+while [ "${1:-}" != "" ]; do
+        case "$1" in
+                "-i" | "--input")
+                shift
+                input=$1
+                ;;
+        esac
+        shift
+done
+
 
 echo "Speak: $input"
 
@@ -28,4 +39,4 @@ if [ "$willkill" = "Kill process" ]; then
 	kill $(ps aux | grep tts | grep -v grep | head -1 | sed -E "s/[[:space:]]+/ /g" | cut -d" " -f 2)
 fi
 
-./text.sh "-" "$input" "$lastAction"
+./text.sh --input "$input" --last-action "$tool_name"
