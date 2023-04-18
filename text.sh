@@ -30,24 +30,45 @@ cd "$(dirname $0)"
 #
 # Else, prompts for an input to start chaining text
 if [ -n "$lastAction" ] && [ -n "$inputLine" ]; then
-	input=$(echo -e "0line0\n$inputLine" | sed -E "s/[[:space:][:punct:]]+/\n/g" | choose -m)
-	if [ "$input" = "0line0" ]; then
-		input=$(echo "$inputLine" |  sed -E "s/[ ]+/ /g" | sed "s/[\"\']//g" | core/dialog_input.sh "edit line")
+	main_prompt="[l]ine, [e]dit line, [c]opy&exit, [p]aste"
+	input=$(echo -e "$inputLine" | sed -E "s/[[:space:][:punct:]]+/\n/g" | fold -sw 80 | choose -m -s 20 -p "$main_prompt")
+
+	[ "$input" = "-c" ] && echo "$inputLine" | pbcopy && exit 0
+
+	if [ "$input" = "-e" ]; then
+		input=$(echo "$inputLine" |  sed -E "s/[ ]+/ /g" | sed "s/[\"\']//g" | core/dialog_input.sh "Edit line")
+	elif [ "$input" = "-l" ]; then
+		input="$inputLine"
 	fi
 elif [ -n "$inputLine" ]; then
 	input=$inputLine
 else
-	input=$(echo "Input something" | choose -n -1 -m)
+	input=$(echo "." | choose -n -1 -m -s 16 -p "-X: [p]aste")
+	if [ "$input" = "-p" ]; then
+		input="$(pbpaste)"
+	fi
 fi
 
-if [ -z "$input" ]; then
-	exit 0
-fi
+
+
+# If no input, then exit
+[ -z "$input" ] && exit 0
 
 
 
 # Avoiding problems due to weird charset encoding
-input=$(echo "$input" | iconv -f utf8 -t ascii//TRANSLIT)
+input="$(echo "$input" | iconv -f utf8 -t ascii//TRANSLIT)"
+
+
+## Detecting pipe
+#pipe_sep=";;"
+#
+#pipe="$(echo $input | sed 's/|//g' | sed "s/[ ]*$pipe_sep[ ]*/|/" | cut -sd"|" -f1)"
+#if [ $(echo $pipe | wc -w) -gt 0 ]; then
+#	piping=("--pipe" "$pipe")
+#	echo "pipe detected: ${piping[@]}"
+#	input=$(echo $input | sed "s/$pipe_sep/|/" | sed "s/^.*|//")
+#fi
 
 
 # Retrieving the name of available tools by the contents of tool_name variable
@@ -55,7 +76,11 @@ tools="$(grep ^tool_name= tools/* | sed -E 's/^[^"]*"([^"]*)"/\1/' | grep -v Dum
 
 
 # Using dynamic menu that places the most used options on top
-action=$(core/custom_menu.sh "$tools" "$0" "$lastAction")
+action=$(core/custom_menu.sh --menu "$tools" --path "$0" -l "$lastAction" --prompt "$(echo $input | fold -sw 60)..." --pipe "$input")
+
+
+pipe_sep=";;"
+input=$(echo $input | sed "s/$pipe_sep/|/" | sed "s/^.*|//")
 
 
 # Fetching the tool file to run
@@ -63,7 +88,7 @@ script="$(grep ^tool_name=\"$action\" tools/* | cut -d":" -f 1)"
 
 # If not found, restart tool
 if [ -z "$script" ]; then
-	./text.sh
+	#./text.sh
 	exit 0
 fi
 
