@@ -31,7 +31,7 @@ cd "$(dirname $0)"
 # Else, prompts for an input to start chaining text
 if [ -n "$lastAction" ] && [ -n "$inputLine" ]; then
 	main_prompt="[l]ine, [e]dit line, [c]opy&exit, [p]aste"
-	input=$(echo -e "$inputLine" | sed -E "s/[[:space:][:punct:]]+/\n/g" | fold -sw 80 | choose -m -s 20 -p "$main_prompt")
+	input=$(echo -e "$inputLine" | sed -E "s/[[:space:][:punct:]]+/\n/g" | fold -sw 80 | choose -m -s 20 -p "$main_prompt" -q "$inputLine")
 
 	[ "$input" = "-c" ] && echo "$inputLine" | pbcopy && exit 0
 
@@ -43,10 +43,13 @@ if [ -n "$lastAction" ] && [ -n "$inputLine" ]; then
 elif [ -n "$inputLine" ]; then
 	input=$inputLine
 else
-	input=$(echo "." | choose -n -1 -m -s 16 -p "-X: [p]aste")
+	[ -e "/tmp/text_hist.txt" ] || echo "." > "/tmp/text_hist.txt"
+	#input=$(cat tools/text_hist.sh | grep CHAR= | cut -d'"' -f 2 | choose -n 2 -m -s 16 -p "-X: [p]aste" -t tools/text_hist.sh)
+	input=$(echo "." | choose -n 2 -m -s 16 -p "-X: [p]aste" -t tools/text_hist.sh)
 	if [ "$input" = "-p" ]; then
 		input="$(pbpaste)"
 	fi
+	echo "$input" >> "/tmp/text_hist.txt"
 fi
 
 

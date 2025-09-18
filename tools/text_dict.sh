@@ -16,7 +16,7 @@ done
 
 
 echo "Pesquisa em dicionario: $input"
-line=$(links -dump https://www.dicio.com.br/$(echo "$input" | awk '{print tolower($0)}')/ | tail --lines=+11 | choose -n 10)
+line=$(links -dump https://www.dicio.com.br/$(echo "$input" | awk '{print tolower($0)}')/ | tail --lines=+11 | choose -n 10 -w 80)
 
 if [ $? = 1 ]; then
 	exit 1;
